@@ -53,7 +53,7 @@
         } else if (this.readyState === this.DONE) {
           console.log(this.responseText);
           const res = JSON.parse(this.responseText);
-          window.open(res.data.hosted_checkout_url + '?ln=1', '_blank');
+          window.location.assign(res.data.hosted_checkout_url + '?ln=1');
         }
       });
 
