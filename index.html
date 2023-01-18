@@ -1,0 +1,70 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <style>
+    /* Style the submit button */
+    #submitBtn {
+      background-color: #04AA6D;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      float: left;
+      font-size: 30px;
+    }
+
+    /* Style the amount */
+    #amtId {
+      font-size: 40px;
+    }
+  </style>
+</head>
+
+<body style="padding:30px">
+  <h1> Payment Setup </h1>
+  <h2> Amount (EUR): </h2>
+
+  <input type="number" id="amtId" min="0" max="5000" step="0.01" required />
+  </br></br></br></br></br></br>
+  <button onclick="makeInvoice();" id='submitBtn'> Make Invoice</button>
+
+  <script>
+    // Enter OpenNode INVOICE API key (first one) and preferred Fiat Currency
+    // https://app.opennode.com/developers/integrations
+    const apiKey = 'b0d9f295-6b28-4123-9a4c-8757d677d55a';
+
+    function makeInvoice() {
+      const data = JSON.stringify({
+        currency: 'EUR',
+        auto_settle: true,
+        amount: document.getElementById("amtId").value,
+        notif_email: 'fatiassilvestres@gmail.com'
+      });
+
+      const xhr = new XMLHttpRequest();
+      xhr.withCredentials = false;
+
+      xhr.addEventListener('readystatechange', function () {
+        if (this.readyState == 4 && this.status != 200) {
+          alert(this.responseText);
+        } else if (this.readyState === this.DONE) {
+          console.log(this.responseText);
+          const res = JSON.parse(this.responseText);
+          window.open(res.data.hosted_checkout_url + '?ln=1', '_blank');
+        }
+      });
+
+      xhr.open('POST', 'https://api.opennode.com/v1/charges');
+      xhr.setRequestHeader('accept', 'application/json');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', apiKey);
+      xhr.send(data);
+
+    }
+  </script>
+</body>
+
+</html>
